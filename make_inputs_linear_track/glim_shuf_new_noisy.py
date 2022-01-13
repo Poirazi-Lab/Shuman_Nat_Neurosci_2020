@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue March 30 09:05:21 2021.
@@ -8,6 +8,7 @@ Created on Tue March 30 09:05:21 2021.
 import os
 import sys
 import numpy as np
+from pathlib import Path
 
 nrun = int(sys.argv[1])
 desync_factor = sys.argv[2]
@@ -32,10 +33,10 @@ elif jitter == 'CA3':
 else:
     sys.exit('Wrong jittering.')
 
-folderpath = f'Inputs_linear_rand_stops_noisy_jitter{name}_{desync_factor}/'
+folderpath = Path(f'Inputs_linear_rand_stops_noisy_jitter{name}_{desync_factor}/')
 
 if not os.path.exists(folderpath):
-    os.system(f'mkdir -p {folderpath}')
+    os.makedirs(folderpath)
 
 rndAll = []
 
@@ -45,9 +46,9 @@ vec_shuffled_ca3 = []
 print(f'Factor {desync_factor} RUN {nrun} ...\n')
 
 p = f'run_{nrun}/'
-source_ec = f'runs_produced_by_python_ec_rand_stops/{p}'
-source_ca3 = f'runs_produced_by_python_ca3_rand_stops/{p}'
-dest = folderpath + p
+source_ec = Path(f'runs_produced_by_python_ec_rand_stops/{p}')
+source_ca3 = Path(f'runs_produced_by_python_ca3_rand_stops/{p}')
+dest = Path.joinpath(folderpath, p)
 
 if not os.path.exists(dest):
     os.makedirs(dest)
@@ -61,13 +62,12 @@ for plf in range(1, n_place_fields+1):
 
 for mydir in listdirs:
 
-    L_ec = len(os.listdir(source_ec+mydir))
+    L_ec = len(os.listdir(Path.joinpath(source_ec, mydir)))
     vec_ec = list(np.random.permutation(range(dend_ec)))
     vec_shuffled_ec.append(vec_ec)
 
     for i in range(L_ec):
-
-        with open(f'{source_ec}{mydir}/s{vec_ec[i]}.txt', 'r') as f:
+        with open(Path(f'{source_ec}/{mydir}/s{vec_ec[i]}.txt'), 'r') as f:
             lines = f.read().splitlines()
 
         lines = [int(x)+time_delay for x in lines]
@@ -89,8 +89,7 @@ for mydir in listdirs:
 
         lines_noisy = sorted(lines_noisy)
         lines_noisy = [x for x in lines_noisy if x > 0]
-
-        with open(f'{dest}g{counter_ec}_EC.txt', 'w') as f:
+        with open(Path(f'{dest}/g{counter_ec}_EC.txt'), 'w') as f:
             for line in lines_noisy:
                 nline = str(int(line))
                 f.write(nline + '\n')
@@ -101,13 +100,12 @@ print('ok with ec')
 
 for mydir in listdirs:
 
-    L_ca3 = len(os.listdir(source_ca3+mydir))
+    L_ca3 = len(os.listdir(Path.joinpath(source_ca3, mydir)))
     vec_ca3 = list(np.random.permutation(range(dend_ca3)))
     vec_shuffled_ca3.append(vec_ca3)
 
     for i in range(0, L_ca3):
-
-        with open(f'{source_ca3}{mydir}/c{vec_ca3[i]}.txt', 'r') as f:
+        with open(Path(f'{source_ca3}/{mydir}/c{vec_ca3[i]}.txt'), 'r') as f:
             lines = f.read().splitlines()
 
         lines = [int(x) + time_delay+time_delay_ca3 for x in lines]
@@ -129,8 +127,7 @@ for mydir in listdirs:
 
         lines_noisy = sorted(lines_noisy)
         lines_noisy = [x for x in lines_noisy if x > 0]
-
-        with open(f'{dest}g{counter_ca3}_CA3.txt', 'w') as f:
+        with open(Path(f'{dest}/g{counter_ca3}_CA3.txt'), 'w') as f:
             for line in lines_noisy:
                 nline = str(int(line))
                 f.write(nline + '\n')

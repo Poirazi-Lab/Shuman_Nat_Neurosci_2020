@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 Created on Tue Mar 27 09:08:09 2018.
@@ -8,6 +8,7 @@ Created on Tue Mar 27 09:08:09 2018.
 import os
 import sys
 import numpy as np
+from pathlib import Path
 from gridfield import gridfield
 import matplotlib.pyplot as plt
 
@@ -36,12 +37,12 @@ myy = 1
 x_array = range(0, myx, 5)
 y_array = [1]
 
-print(f'Simulating RUN... {my_run}')
-print
-maindir = 'runs_produced_by_python_ec_rand_stops/'
+print(f'Simulating RUN... {my_run}\n')
 
-dirname = f'{maindir}run_{my_run}'
-os.system(f'mkdir -p {dirname}')
+maindir = 'runs_produced_by_python_ec_rand_stops'
+
+dirname = Path(f'{maindir}/run_{my_run}')
+os.makedirs(dirname)
 
 np.random.seed(my_run)
 
@@ -110,8 +111,7 @@ for i in range(1, npoints+1):
 
 # save the path
 path = np.array(path)
-filename = f'{dirname}/path.txt'
-np.savetxt(filename, path, fmt='%.0f', delimiter=' ')
+np.savetxt(Path(f'{dirname}/path.txt'), path, fmt='%.0f', delimiter=' ')
 
 print('Done with the path')
 
@@ -127,8 +127,8 @@ for xxx in x_array:
     for yyy in y_array:
 
         my_field += 1
-        folder2 = f'{dirname}/place_field_{my_field}'
-        os.system(f'mkdir -p {folder2}')
+        folder2 = Path(f'{dirname}/place_field_{my_field}')
+        os.makedirs(folder2)
 
         # d is the x,y point of the grid field of dend ni
         d = np.zeros((ndend, myx, myy))
@@ -204,7 +204,7 @@ for xxx in x_array:
                     spikes.append(i)
 
             spikes = np.array(spikes).reshape(-1, 1)
-            filename2 = f'{folder2}/s{ni}.txt'
+            filename2 = Path(f'{folder2}/s{ni}.txt')
             np.savetxt(filename2, spikes, fmt='%.0d', delimiter=' ')
 
         print(f'Done with Grid field {my_field}')
