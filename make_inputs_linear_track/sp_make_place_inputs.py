@@ -1,6 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Mar 27 09:08:09 2018.
+
+@author: spiros
+"""
 import os
 import sys
 import numpy as np
+from pathlib import Path
 
 nrun = int(sys.argv[1])
 
@@ -10,7 +18,7 @@ maindir = 'runs_produced_by_python_ca3_rand_stops'
 source = 'runs_produced_by_python_ec_rand_stops'
 
 if not os.path.exists(maindir):
-    os.system(f'mkdir -p {maindir}')
+    os.makedirs(maindir)
 
 np.random.seed(nrun)
 
@@ -29,13 +37,13 @@ mu_out = 0.016
 sigma = 0.002
 
 print(f'RUN:... {nrun}')
-folder = f'{maindir}/run_{nrun}'
-os.system(f'mkdir -p {folder}')
+folder = Path(f'{maindir}/run_{nrun}')
+os.makedirs(folder)
 
 ############################################################################
 # when ec inputs(.txt) store in matlab without time map ##########
-pathd = f'{source}/run_{nrun}'
-path = np.loadtxt(pathd+'/path.txt', 'int', delimiter=' ')
+pathd = Path(f'{source}/run_{nrun}/path.txt')
+path = np.loadtxt(pathd, 'int', delimiter=' ')
 
 path = path[:, 0]
 
@@ -53,13 +61,13 @@ yarray = [1]
 for plf in range(1, nplace_field+1):  # for plf 1 --> restriction if
     print(f'Place Field... {plf}')
 
-    folder2 = f'{folder}/place_field_{plf}'
-    os.system(f'mkdir -p {folder2}')
+    folder2 = Path(f'{folder}/place_field_{plf}')
+    os.makedirs(folder2)
 
     # Load ALL spiketimes/octal
     spikemap_sall = []
     for dend in range(0, nEC):
-        file_ = f'{source}/run_{nrun}/place_field_{plf}/s{dend}.txt'
+        file_ = Path(f'{source}/run_{nrun}/place_field_{plf}/s{dend}.txt')
         with open(file_, 'r') as f:
             A = f.read().splitlines()
             spikemap_sall += [int(x) for x in A]
@@ -72,8 +80,8 @@ for plf in range(1, nplace_field+1):  # for plf 1 --> restriction if
 ##############################################################################
 
     #########################
-    initial = peak-half_size
-    final = peak+half_size
+    initial = peak - half_size
+    final = peak + half_size
 
     # Check boundary conditions
     if initial < 0:
@@ -121,5 +129,5 @@ for plf in range(1, nplace_field+1):  # for plf 1 --> restriction if
         ca3_input = sorted(set(ca3_input))
 
         ca3_input = np.array(ca3_input).reshape(-1, 1)
-        filename = f'{folder2}/c{i}.txt'
+        filename = Path(f'{folder2}/c{i}.txt')
         np.savetxt(filename, ca3_input, fmt='%d', delimiter=' ')
