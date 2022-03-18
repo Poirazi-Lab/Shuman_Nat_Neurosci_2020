@@ -118,7 +118,7 @@ print('Done with the path')
 ##############################################################################
 #  G R I D    L I K E    I N P U T S  ########################################
 ##############################################################################
-ndend = 8  # Number of dendrites
+nsyn = 8  # Number of presynaptic cells per place field.
 theta_freq = 8  # in Hz
 theta_phase = 0
 my_field = 0
@@ -131,12 +131,12 @@ for xxx in x_array:
         os.makedirs(folder2)
 
         # d is the x,y point of the grid field of dend ni
-        d = np.zeros((ndend, myx, myy))
+        d = np.zeros((nsyn, myx, myy))
         dd = np.zeros((myx, myy))
 
         angle = 0.0
         lambda_var = 3.0
-        for ni in range(ndend):
+        for ni in range(nsyn):
             lambda_var += 0.5
             angle += 0.4
             for x in range(myx):
@@ -144,7 +144,7 @@ for xxx in x_array:
                 for y in range(myy):
                     d[ni, x, y] = gridfield(angle, lambda_var, xxx, yyy, x, y)
 
-        for ni in range(ndend):
+        for ni in range(nsyn):
             dd += d[ni, :, :]
 
         # run visualize only for few dendrites, is RAM consuming
@@ -187,7 +187,7 @@ for xxx in x_array:
             plt.savefig('TheoreticalPlaceCell.eps', format='eps', dpi=1200)
             plt.savefig('TheoreticalPlaceCell.png', format='png', dpi=1200)
 
-        for ni in range(ndend):
+        for ni in range(nsyn):
             spikes = []
             for i in range(len(path)):  # i is time
                 current_loc = path[i, :]
