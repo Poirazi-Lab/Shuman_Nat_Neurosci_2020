@@ -34,7 +34,7 @@ myx = 201  # Choose +1 the points you want (apart from 1)
 myy = 1
 
 # Place field coordinations; all to all combinations
-x_array = range(0, myx, 5)
+x_array = range(0, myx, 5)  # or use directly a list, e.g., x_array = [10, 15, 20]
 y_array = [1]
 
 print(f'Simulating RUN... {my_run}\n')
